@@ -3338,6 +3338,11 @@ const handleCommand = async (message: any, command: string, args: string[]): Pro
             await showLeagueAnalysisMenu(sender, 'ligue1', 'Ligue 1', ligue1AnalysisDataLoaded);
             break;
 
+        
+        case 'graph':
+            await startGraphingCalculator(sender);
+            break;        
+
 
         // YouTube Commands
         case 'youtube':
@@ -3585,10 +3590,14 @@ botBaileys.on('message', async (message) => {
             return;
         }
 
-        case 'graph':
-            await startGraphingCalculator(sender);
-            break;        
+        // Handle Graphing Calculator session states
+        if (session.awaitingGraphInput && session.isGraphCalculatorActive) {
+            const input = message.body?.trim();
+            await handleGraphingInput(sender, input);
+            return;
+        }
 
+        
 
         // Handle YouTube session states
         if (session.awaitingYouTubeQuery) {
@@ -3702,12 +3711,7 @@ botBaileys.on('message', async (message) => {
             return;
         }
 
-        // Handle Graphing Calculator session states
-        if (session.awaitingGraphInput && session.isGraphCalculatorActive) {
-            const input = message.body?.trim();
-            await handleGraphingInput(sender, input);
-            return;
-        }
+
 
         // Handle adventure commands specifically
         if (messageText.startsWith('.adventure') || messageText.startsWith('adventure')) {
